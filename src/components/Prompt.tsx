@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { useUserInfo } from "../hooks/useUserInfo";
+import { useHistory } from "../providers/HistoryContext";
+import { useUserInfo } from "../providers/UserInfoContext";
 
 const Primary = styled.span`
   color: ${({ theme }) => theme.mauve};
@@ -55,11 +56,43 @@ const PromptInput = () => {
   const [value, setValue] = useState("");
   const [cursorPos, setCursorPos] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { addLine, clear } = useHistory();
+  const { username, domain } = useUserInfo();
 
   const syncCursor = () => {
     requestAnimationFrame(() => {
       setCursorPos(inputRef.current?.selectionStart ?? 0);
     });
+  };
+
+  const executeCommand = (command: string) => {
+    switch (command) {
+      case "clear":
+        clear();
+
+        break;
+      default:
+        addLine([{ text: `command not found: ${command}` }]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      addLine([
+        { text: username, style: "primary" },
+        { text: "@" },
+        { text: domain, style: "secondary" },
+        { text: ":~$ " },
+        { text: value },
+      ]);
+
+      executeCommand(value);
+
+      setValue("");
+      setCursorPos(0);
+    } else {
+      syncCursor();
+    }
   };
 
   useEffect(() => {
@@ -85,7 +118,7 @@ const PromptInput = () => {
           setValue(e.target.value);
           syncCursor();
         }}
-        onKeyDown={syncCursor}
+        onKeyDown={handleKeyDown}
       />
       <span>{beforeCursor}</span>
       <Caret>{atCursor}</Caret>
