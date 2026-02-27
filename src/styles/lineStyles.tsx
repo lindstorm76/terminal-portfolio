@@ -1,13 +1,19 @@
 import styled from "styled-components";
-import type { LineStyle } from "../hooks/useHistory";
+import type { LineStyle } from "../providers/HistoryContext";
 
 const Primary = styled.span`
+  white-space: pre;
   color: ${({ theme }) => theme.mauve};
 `;
 
 const Secondary = styled.span`
-  color: ${({ theme }) => theme.sapphire};
-  font-weight: bold;
+  white-space: pre;
+  color: ${({ theme }) => theme.teal};
+`;
+
+const System = styled.span`
+  white-space: pre;
+  color: ${({ theme }) => theme.maroon};
 `;
 
 const Default = styled.span`
@@ -16,9 +22,12 @@ const Default = styled.span`
 
 export const LINE_STYLE_MAP: Record<
   LineStyle,
-  React.ComponentType<React.PropsWithChildren>
+  React.ComponentType<
+    React.PropsWithChildren<React.HTMLAttributes<HTMLSpanElement>>
+  >
 > = {
   primary: Primary,
   secondary: Secondary,
+  system: System,
   default: Default,
 };
