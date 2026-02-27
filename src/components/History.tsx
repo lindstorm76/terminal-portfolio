@@ -16,7 +16,11 @@ const LinePart = ({ part }: { part: LinePart }) => {
 
 const LineWrapper = styled.div``;
 
-const History = () => {
+interface HistoryProps {
+  onBootComplete?: () => void;
+}
+
+const History = ({ onBootComplete }: HistoryProps) => {
   const { lines, addLine } = useHistory();
 
   useBootSequence(() => {
@@ -25,12 +29,7 @@ const History = () => {
       { text: "help", style: "primary" },
       { text: "`." },
     ]);
-    addLine([
-      { text: "relaxed-haibt", style: "primary" },
-      { text: "@" },
-      { text: "terminal.thanapong.dev", style: "secondary" },
-      { text: ":~$" },
-    ]);
+    onBootComplete?.();
   });
 
   return lines.map((line) => (
