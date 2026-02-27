@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { useHistory } from "../providers/HistoryContext";
 import { useUserInfo } from "../providers/UserInfoContext";
+import { useCommandHistory } from "../providers/CommandHistoryContext";
 
 const Primary = styled.span`
   color: ${({ theme }) => theme.mauve};
@@ -55,9 +56,17 @@ const InputWrapper = styled.div`
 const PromptInput = () => {
   const [value, setValue] = useState("");
   const [cursorPos, setCursorPos] = useState(0);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [draft, setDraft] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const { addLine, clear } = useHistory();
   const { username, domain } = useUserInfo();
+  const {
+    commands,
+    addCommand,
+    clear: clearCommands,
+    showHistory,
+  } = useCommandHistory();
 
   const syncCursor = () => {
     requestAnimationFrame(() => {
@@ -65,10 +74,28 @@ const PromptInput = () => {
     });
   };
 
+  const setValueAndMoveCursorToEnd = (newValue: string) => {
+    setValue(newValue);
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        inputRef.current.setSelectionRange(newValue.length, newValue.length);
+
+        setCursorPos(newValue.length);
+      }
+    });
+  };
+
   const executeCommand = (command: string) => {
+    addCommand(command);
+
     switch (command) {
       case "clear":
         clear();
+        clearCommands();
+
+        break;
+      case "history":
+        showHistory();
 
         break;
       default:
@@ -90,6 +117,38 @@ const PromptInput = () => {
 
       setValue("");
       setCursorPos(0);
+      setHistoryIndex(-1);
+      setDraft("");
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+
+      if (commands.length === 0) return;
+      if (historyIndex === -1) {
+        setDraft(value);
+
+        const newIndex = commands.length - 1;
+
+        setHistoryIndex(newIndex);
+        setValueAndMoveCursorToEnd(commands[newIndex]);
+      } else if (historyIndex > 0) {
+        const newIndex = historyIndex - 1;
+
+        setHistoryIndex(newIndex);
+        setValueAndMoveCursorToEnd(commands[newIndex]);
+      }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+
+      if (historyIndex === -1) return;
+      if (historyIndex < commands.length - 1) {
+        const newIndex = historyIndex + 1;
+
+        setHistoryIndex(newIndex);
+        setValueAndMoveCursorToEnd(commands[newIndex]);
+      } else {
+        setHistoryIndex(-1);
+        setValueAndMoveCursorToEnd(draft);
+      }
     } else {
       syncCursor();
     }
