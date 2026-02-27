@@ -1,11 +1,10 @@
-import { useUserInfo } from "./hooks/useUserInfo";
+import History from "./components/History";
 
 function App() {
-  const { username, domain } = useUserInfo();
   return (
-    <p>
-      {username}@{domain}
-    </p>
+    <>
+      <History />
+    </>
   );
 }
 

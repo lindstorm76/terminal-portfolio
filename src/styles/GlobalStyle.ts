@@ -13,6 +13,7 @@ export const GlobalStyle = createGlobalStyle`
     font-family: "Martian Mono", system-ui, -apple-system, sans-serif;
     font-size: 14px;
     line-height: 1.6;
+    padding: 16px;
   }
 
   a {
