@@ -12,6 +12,7 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@scaleway/random-name": "^5.1.4",
     "@vitejs/plugin-react": "^5.1.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

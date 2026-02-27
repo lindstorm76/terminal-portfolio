@@ -1,5 +1,12 @@
+import { useUserInfo } from "./hooks/useUserInfo";
+
 function App() {
-  return <p>i have friends everywhere</p>;
+  const { username, domain } = useUserInfo();
+  return (
+    <p>
+      {username}@{domain}
+    </p>
+  );
 }
 
 export default App;
