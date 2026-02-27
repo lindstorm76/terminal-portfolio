@@ -3,6 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { useHistory } from "../providers/HistoryContext";
 import { useUserInfo } from "../providers/UserInfoContext";
 import { useCommandHistory } from "../providers/CommandHistoryContext";
+import { COMMANDS } from "../commands";
 
 const Primary = styled.span`
   color: ${({ theme }) => theme.mauve};
@@ -17,9 +18,9 @@ const PromptBody = () => {
 
   return (
     <span>
-      <Primary>{username}</Primary>
+      <Secondary>{username}</Secondary>
       {"@"}
-      <Secondary>{domain}</Secondary>
+      <Primary>{domain}</Primary>
       {":~$ "}
     </span>
   );
@@ -53,7 +54,11 @@ const InputWrapper = styled.div`
   cursor: text;
 `;
 
-const PromptInput = () => {
+interface PromptInputProps {
+  onReboot: () => void;
+}
+
+const PromptInput = ({ onReboot }: PromptInputProps) => {
   const [value, setValue] = useState("");
   const [cursorPos, setCursorPos] = useState(0);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -79,7 +84,6 @@ const PromptInput = () => {
     requestAnimationFrame(() => {
       if (inputRef.current) {
         inputRef.current.setSelectionRange(newValue.length, newValue.length);
-
         setCursorPos(newValue.length);
       }
     });
@@ -89,15 +93,65 @@ const PromptInput = () => {
     addCommand(command);
 
     switch (command) {
+      case "about":
+        addLine([{ text: "Lorem ipsum about me mockup.", display: "block" }]);
+        addLine([
+          { text: "Software engineer. Lorem ipsum.", display: "block" },
+        ]);
+        break;
+
       case "clear":
         clear();
         clearCommands();
-
         break;
+
+      case "education":
+        addLine([
+          {
+            text: "B.Sc. Computer Science — Lorem University, 20XX",
+            display: "block",
+          },
+        ]);
+        addLine([{ text: "Lorem ipsum education details.", display: "block" }]);
+        break;
+
+      case "email":
+        window.open("mailto:thanapong.angkha@gmail.com");
+        addLine([{ text: "opening mail client..." }]);
+        break;
+
+      case "help": {
+        const maxLen = Math.max(...Object.keys(COMMANDS).map((c) => c.length));
+
+        Object.entries(COMMANDS).forEach(([cmd, { description }]) => {
+          addLine([
+            { text: cmd.padEnd(maxLen + 4), style: "primary" },
+            { text: `- ${description}` },
+          ]);
+        });
+        break;
+      }
+
       case "history":
         showHistory();
-
         break;
+
+      case "reboot":
+        clearCommands();
+        onReboot();
+        break;
+
+      case "socials":
+        addLine([
+          { text: "github   ", style: "primary" },
+          { text: "https://github.com/lorem" },
+        ]);
+        break;
+
+      case "whoami":
+        addLine([{ text: username }]);
+        break;
+
       default:
         addLine([{ text: `command not found: ${command}` }]);
     }
@@ -106,9 +160,9 @@ const PromptInput = () => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       addLine([
-        { text: username, style: "primary" },
+        { text: username, style: "secondary" },
         { text: "@" },
-        { text: domain, style: "secondary" },
+        { text: domain, style: "primary" },
         { text: ":~$ " },
         { text: value },
       ]);
@@ -186,11 +240,15 @@ const PromptInput = () => {
   );
 };
 
-const Prompt = () => {
+interface PromptProps {
+  onReboot: () => void;
+}
+
+const Prompt = ({ onReboot }: PromptProps) => {
   return (
     <div>
       <PromptBody />
-      <PromptInput />
+      <PromptInput onReboot={onReboot} />
     </div>
   );
 };
