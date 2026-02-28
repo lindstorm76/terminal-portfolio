@@ -204,6 +204,57 @@ describe("Prompt", () => {
       });
     });
 
+    describe("themes", () => {
+      beforeEach(() => {
+        localStorage.clear();
+      });
+
+      it("lists all four themes", () => {
+        renderPrompt();
+        runCommand("themes");
+        expect(document.body.textContent).toContain("🌻 latte");
+        expect(document.body.textContent).toContain("🪴 frappé");
+        expect(document.body.textContent).toContain("🌺 macchiato");
+        expect(document.body.textContent).toContain("🌿 mocha");
+      });
+
+      it("shows the set instruction", () => {
+        renderPrompt();
+        runCommand("themes");
+        expect(document.body.textContent).toContain(
+          "themes set <theme-name> to change the theme",
+        );
+      });
+
+      it("themes set confirms the change", () => {
+        renderPrompt();
+        runCommand("themes set mocha");
+        expect(document.body.textContent).toContain("theme changed to");
+        expect(document.body.textContent).toContain("mocha");
+      });
+
+      it("themes set saves the theme to localStorage", () => {
+        renderPrompt();
+        runCommand("themes set latte");
+        expect(localStorage.getItem("theme")).toBe("latte");
+      });
+
+      it("themes set is case-insensitive", () => {
+        renderPrompt();
+        runCommand("themes set MOCHA");
+        expect(document.body.textContent).toContain("theme changed to");
+        expect(localStorage.getItem("theme")).toBe("mocha");
+      });
+
+      it("themes set shows an error for an unknown theme", () => {
+        renderPrompt();
+        runCommand("themes set invalid");
+        expect(
+          screen.getByText("theme not found: invalid"),
+        ).toBeInTheDocument();
+      });
+    });
+
     it("clear removes all history lines", () => {
       renderPrompt();
       runCommand("whoami");
