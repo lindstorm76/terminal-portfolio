@@ -166,6 +166,22 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       return;
     }
 
+    if (lower.startsWith("socials go ")) {
+      const name = lower.slice("socials go ".length).trim();
+      if (name in SOCIALS) {
+        window.open(SOCIALS[name].link, "_blank");
+
+        addLine([
+          { text: "opening " },
+          { text: name, style: "primary" },
+          { text: "..." },
+        ]);
+      } else {
+        addLine([{ text: `social not found: ${name}` }]);
+      }
+      return;
+    }
+
     switch (lower) {
       case "about":
         addLine([{ text: "\u00A0" }]);
@@ -256,12 +272,22 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
           ...Object.keys(SOCIALS).map((social) => social.length),
         );
 
+        addLine([{ text: "\u00A0" }]);
+
         Object.entries(SOCIALS).forEach(([social, { link }]) => {
           addLine([
             { text: social.padEnd(maxLen + 4), style: "primary" },
             { text: link },
           ]);
         });
+
+        addLine([{ text: "\u00A0" }]);
+        addLine([
+          { text: "type " },
+          { text: "socials go", style: "primary" },
+          { text: " <social-name> to open" },
+        ]);
+        addLine([{ text: "\u00A0" }]);
 
         break;
       case "themes":
