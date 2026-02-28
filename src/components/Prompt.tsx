@@ -42,17 +42,15 @@ const SuggestedCommand = styled.span<{ selected: boolean }>`
 `;
 
 const blink = keyframes`
-  0%, 100% { background-color: var(--caret-color); color: var(--caret-bg); }
-  50% { background-color: transparent; color: var(--caret-color); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 `;
 
 const Caret = styled.span`
-  --caret-color: ${({ theme }) => theme.text};
-  --caret-bg: ${({ theme }) => theme.base};
   display: inline-block;
-  width: 1ch;
-  background-color: var(--caret-color);
-  color: var(--caret-bg);
+  width: 2px;
+  margin-right: -2px;
+  background-color: ${({ theme }) => theme.mauve};
   animation: ${blink} 1s step-end infinite;
 `;
 
@@ -116,6 +114,16 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       setCursorPos(inputRef.current?.selectionStart ?? 0);
       setSelEnd(inputRef.current?.selectionEnd ?? 0);
     });
+  };
+
+  const resetBlink = () => {
+    const caret = caretRef.current;
+
+    if (!caret) return;
+
+    caret.style.animation = "none";
+    void caret.offsetHeight;
+    caret.style.animation = "";
   };
 
   const resetInput = () => {
@@ -281,6 +289,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    resetBlink();
+
     if (e.ctrlKey && e.key === "c") {
       addLine([
         { text: username, style: "secondary" },
@@ -394,6 +404,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
           setSuggestions([]);
           setSuggestionIndex(-1);
           syncCursor();
+          resetBlink();
         }}
         onKeyDown={handleKeyDown}
         onSelect={syncCursor}
@@ -408,8 +419,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         ) : (
           <>
             <span>{value.slice(0, cursorPos)}</span>
-            <Caret ref={caretRef}>{value[cursorPos] ?? "\u00A0"}</Caret>
-            <span>{value.slice(cursorPos + 1)}</span>
+            <Caret ref={caretRef}>{"\u200B"}</Caret>
+            <span>{value.slice(cursorPos)}</span>
           </>
         )}
       </TextArea>
