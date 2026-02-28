@@ -7,11 +7,14 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  #root {
+    font-size: 14px;
+  }
+
   body {
     background-color: ${({ theme }) => theme.base};
     color: ${({ theme }) => theme.text};
     font-family: "Martian Mono", system-ui, -apple-system, sans-serif;
-    font-size: 14px;
     line-height: 1.6;
     padding: 16px;
   }

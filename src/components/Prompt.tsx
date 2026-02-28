@@ -67,6 +67,7 @@ const HiddenInput = styled.input`
   pointer-events: none;
   width: 0;
   height: 0;
+  font-size: 14px;
 `;
 
 const PromptLine = styled.div`
