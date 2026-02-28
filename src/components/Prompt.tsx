@@ -5,6 +5,8 @@ import { useUserInfo } from "../providers/UserInfoContext";
 import { useCommandHistory } from "../providers/CommandHistoryContext";
 import { COMMANDS } from "../constants/commands";
 import { SOCIALS } from "../constants/socials";
+import { useThemeContext } from "../providers/ThemeContext";
+import { THEMES, type ThemeName } from "../styles/theme";
 
 const Primary = styled.span`
   color: ${({ theme }) => theme.mauve};
@@ -86,6 +88,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     clear: clearCommands,
     showHistory,
   } = useCommandHistory();
+  const { setTheme } = useThemeContext();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const syncCursor = () => {
@@ -119,7 +122,23 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   const executeCommand = (command: string) => {
     addCommand(command);
 
-    switch (command.toLowerCase()) {
+    const lower = command.toLowerCase().trim();
+
+    if (lower.startsWith("themes set ")) {
+      const name = lower.slice("themes set ".length).trim() as ThemeName;
+      if (name in THEMES) {
+        setTheme(name);
+        addLine([
+          { text: "theme changed to " },
+          { text: name, style: "primary" },
+        ]);
+      } else {
+        addLine([{ text: `theme not found: ${name}` }]);
+      }
+      return;
+    }
+
+    switch (lower) {
       case "about":
         addLine([{ text: "\u00A0" }]);
         addLine([
@@ -215,6 +234,21 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
             { text: link },
           ]);
         });
+
+        break;
+      case "themes":
+        addLine([{ text: "\u00A0" }]);
+        addLine([{ text: "🌻 latte" }]);
+        addLine([{ text: "🪴 frappé" }]);
+        addLine([{ text: "🌺 macchiato" }]);
+        addLine([{ text: "🌿 mocha" }]);
+        addLine([{ text: "\u00A0" }]);
+        addLine([
+          { text: "type " },
+          { text: "themes set", style: "primary" },
+          { text: " <theme-name> to change the theme" },
+        ]);
+        addLine([{ text: "\u00A0" }]);
 
         break;
       case "whoami":

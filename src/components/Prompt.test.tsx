@@ -7,6 +7,7 @@ import { UserInfoProvider } from "../providers/UserInfoContext";
 import { CommandHistoryProvider } from "../providers/CommandHistoryContext";
 import { COMMANDS } from "../constants/commands";
 import { SOCIALS } from "../constants/socials";
+import { ThemeContextProvider } from "../providers/ThemeContext";
 import Prompt from "./Prompt";
 
 vi.mock("@scaleway/random-name", () => ({
@@ -30,13 +31,15 @@ const HistoryOutput = () => {
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <ThemeProvider theme={theme}>
-    <UserInfoProvider>
-      <HistoryProvider>
-        <CommandHistoryProvider>{children}</CommandHistoryProvider>
-      </HistoryProvider>
-    </UserInfoProvider>
-  </ThemeProvider>
+  <ThemeContextProvider>
+    <ThemeProvider theme={theme}>
+      <UserInfoProvider>
+        <HistoryProvider>
+          <CommandHistoryProvider>{children}</CommandHistoryProvider>
+        </HistoryProvider>
+      </UserInfoProvider>
+    </ThemeProvider>
+  </ThemeContextProvider>
 );
 
 const renderPrompt = (onReboot = vi.fn()) =>

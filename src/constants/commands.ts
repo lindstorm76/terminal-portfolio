@@ -11,5 +11,6 @@ export const COMMANDS: Record<string, CommandType> = {
   history: { description: "show command history" },
   reboot: { description: "restart the terminal" },
   socials: { description: "find me online" },
+  themes: { description: "list and change themes" },
   whoami: { description: "display current user" },
 };
