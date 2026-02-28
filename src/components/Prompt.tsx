@@ -64,6 +64,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   const [cursorPos, setCursorPos] = useState(0);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draft, setDraft] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestionIndex, setSuggestionIndex] = useState(-1);
   const { addLine, clear } = useHistory();
   const { username, domain } = useUserInfo();
   const {
@@ -212,6 +214,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       setCursorPos(0);
       setHistoryIndex(-1);
       setDraft("");
+      setSuggestions([]);
+      setSuggestionIndex(-1);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
 
@@ -242,6 +246,25 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         setHistoryIndex(-1);
         setValueAndMoveCursorToEnd(draft);
       }
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+
+      if (suggestions.length > 0) {
+        const nextIndex = (suggestionIndex + 1) % suggestions.length;
+        setSuggestionIndex(nextIndex);
+        setValueAndMoveCursorToEnd(suggestions[nextIndex]);
+      } else {
+        if (!value) return;
+        const matches = Object.keys(COMMANDS).filter((cmd) =>
+          cmd.startsWith(value),
+        );
+        if (matches.length === 1) {
+          setValueAndMoveCursorToEnd(matches[0]);
+        } else if (matches.length > 1) {
+          setSuggestions(matches);
+          setSuggestionIndex(-1);
+        }
+      }
     } else {
       syncCursor();
     }
@@ -268,6 +291,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
+          setSuggestions([]);
+          setSuggestionIndex(-1);
           syncCursor();
         }}
         onKeyDown={handleKeyDown}
@@ -275,6 +300,13 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       <span>{beforeCursor}</span>
       <Caret>{atCursor}</Caret>
       <span>{afterCursor}</span>
+      {suggestions.length > 0 && (
+        <div>
+          {suggestions.map((cmd, i) => (
+            <span key={i}>{i < suggestions.length - 1 ? cmd + "  " : cmd}</span>
+          ))}
+        </div>
+      )}
     </InputWrapper>
   );
 };
