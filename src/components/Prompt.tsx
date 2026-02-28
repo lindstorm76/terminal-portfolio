@@ -16,16 +16,22 @@ const Secondary = styled.span`
   color: ${({ theme }) => theme.teal};
 `;
 
+const PromptBodyWrapper = styled.span`
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-right: 10px;
+`;
+
 const PromptBody = () => {
   const { username, domain } = useUserInfo();
 
   return (
-    <span>
+    <PromptBodyWrapper>
       <Secondary>{username}</Secondary>
       {"@"}
       <Primary>{domain}</Primary>
       {":~$ "}
-    </span>
+    </PromptBodyWrapper>
   );
 };
 
@@ -63,9 +69,20 @@ const HiddenInput = styled.input`
   height: 0;
 `;
 
+const PromptLine = styled.div`
+  display: flex;
+`;
+
 const InputWrapper = styled.div`
-  display: inline;
+  flex: 1;
+  min-width: 0;
+  position: relative;
   cursor: text;
+`;
+
+const TextArea = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 interface PromptInputProps {
@@ -90,6 +107,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   } = useCommandHistory();
   const { setTheme } = useThemeContext();
   const inputRef = useRef<HTMLInputElement>(null);
+  const textAreaRef = useRef<HTMLDivElement>(null);
+  const caretRef = useRef<HTMLSpanElement>(null);
 
   const syncCursor = () => {
     requestAnimationFrame(() => {
@@ -347,6 +366,21 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
+  useEffect(() => {
+    const textArea = textAreaRef.current;
+    const caret = caretRef.current;
+
+    if (!textArea || !caret) return;
+
+    const caretRight = caret.offsetLeft + caret.offsetWidth;
+
+    if (caretRight > textArea.scrollLeft + textArea.clientWidth) {
+      textArea.scrollLeft = caretRight - textArea.clientWidth;
+    } else if (caret.offsetLeft < textArea.scrollLeft) {
+      textArea.scrollLeft = caret.offsetLeft;
+    }
+  }, [cursorPos, value]);
+
   const hasSelection = selEnd > cursorPos;
 
   return (
@@ -363,19 +397,21 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         onKeyDown={handleKeyDown}
         onSelect={syncCursor}
       />
-      {hasSelection ? (
-        <>
-          <span>{value.slice(0, cursorPos)}</span>
-          <Selection>{value.slice(cursorPos, selEnd)}</Selection>
-          <span>{value.slice(selEnd)}</span>
-        </>
-      ) : (
-        <>
-          <span>{value.slice(0, cursorPos)}</span>
-          <Caret>{value[cursorPos] ?? "\u00A0"}</Caret>
-          <span>{value.slice(cursorPos + 1)}</span>
-        </>
-      )}
+      <TextArea ref={textAreaRef}>
+        {hasSelection ? (
+          <>
+            <span>{value.slice(0, cursorPos)}</span>
+            <Selection>{value.slice(cursorPos, selEnd)}</Selection>
+            <span>{value.slice(selEnd)}</span>
+          </>
+        ) : (
+          <>
+            <span>{value.slice(0, cursorPos)}</span>
+            <Caret ref={caretRef}>{value[cursorPos] ?? "\u00A0"}</Caret>
+            <span>{value.slice(cursorPos + 1)}</span>
+          </>
+        )}
+      </TextArea>
       {suggestions.length > 0 && (
         <div>
           {suggestions.map((cmd, index) => (
@@ -401,10 +437,10 @@ interface PromptProps {
 
 const Prompt = ({ onReboot }: PromptProps) => {
   return (
-    <div>
+    <PromptLine>
       <PromptBody />
       <PromptInput onReboot={onReboot} />
-    </div>
+    </PromptLine>
   );
 };
 
