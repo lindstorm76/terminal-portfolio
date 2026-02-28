@@ -16,6 +16,11 @@ const System = styled.span`
   color: ${({ theme }) => theme.maroon};
 `;
 
+const Bold = styled.span`
+  white-space: pre;
+  font-weight: bold;
+`;
+
 const Default = styled.span`
   white-space: pre;
 `;
@@ -29,5 +34,6 @@ export const LINE_STYLE_MAP: Record<
   primary: Primary,
   secondary: Secondary,
   system: System,
+  bold: Bold,
   default: Default,
 };

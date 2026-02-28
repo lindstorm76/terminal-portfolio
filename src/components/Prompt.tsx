@@ -3,7 +3,8 @@ import styled, { keyframes } from "styled-components";
 import { useHistory } from "../providers/HistoryContext";
 import { useUserInfo } from "../providers/UserInfoContext";
 import { useCommandHistory } from "../providers/CommandHistoryContext";
-import { COMMANDS } from "../commands";
+import { COMMANDS } from "../constants/commands";
+import { SOCIALS } from "../constants/socials";
 
 const Primary = styled.span`
   color: ${({ theme }) => theme.mauve};
@@ -63,7 +64,6 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   const [cursorPos, setCursorPos] = useState(0);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draft, setDraft] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
   const { addLine, clear } = useHistory();
   const { username, domain } = useUserInfo();
   const {
@@ -72,6 +72,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     clear: clearCommands,
     showHistory,
   } = useCommandHistory();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const syncCursor = () => {
     requestAnimationFrame(() => {
@@ -92,34 +93,65 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   const executeCommand = (command: string) => {
     addCommand(command);
 
-    switch (command) {
+    switch (command.toLowerCase()) {
       case "about":
-        addLine([{ text: "Lorem ipsum about me mockup.", display: "block" }]);
+        addLine([{ text: "\u00A0" }]);
+        addLine([{ text: "Hello, friend." }]);
+        addLine([{ text: "\u00A0" }]);
         addLine([
-          { text: "Software engineer. Lorem ipsum.", display: "block" },
+          {
+            text: "My name is ",
+          },
+          {
+            text: "Thanapong Ankha",
+            style: "bold",
+          },
+          {
+            text: ",",
+          },
         ]);
-        break;
+        addLine([
+          {
+            text: "a passionate developer, builder of things, breaker of things. Bangkok-based.",
+          },
+        ]);
+        addLine([{ text: "\u00A0" }]);
+        addLine([
+          { text: "type " },
+          { text: "email", style: "primary" },
+          { text: " to reach me." },
+        ]);
+        addLine([{ text: "\u00A0" }]);
 
+        break;
       case "clear":
         clear();
         clearCommands();
-        break;
 
+        break;
       case "education":
+        addLine([{ text: "\u00A0" }]);
         addLine([
           {
-            text: "B.Sc. Computer Science — Lorem University, 20XX",
-            display: "block",
+            text: "Bachelor of Engineering in Computer Engineering",
+            style: "primary",
           },
         ]);
-        addLine([{ text: "Lorem ipsum education details.", display: "block" }]);
-        break;
+        addLine([{ text: "\u00A0" }]);
+        addLine([
+          {
+            text: "Khon Kaen University | GPA: 3.56 | August 2018 - July 2022",
+          },
+        ]);
+        addLine([{ text: "\u00A0" }]);
 
+        break;
       case "email":
         window.open("mailto:thanapong.angkha@gmail.com");
-        addLine([{ text: "opening mail client..." }]);
-        break;
 
+        addLine([{ text: "opening mail client..." }]);
+
+        break;
       case "help": {
         const maxLen = Math.max(...Object.keys(COMMANDS).map((c) => c.length));
 
@@ -129,29 +161,36 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
             { text: `- ${description}` },
           ]);
         });
+
         break;
       }
 
       case "history":
         showHistory();
-        break;
 
+        break;
       case "reboot":
         clearCommands();
         onReboot();
-        break;
 
+        break;
       case "socials":
-        addLine([
-          { text: "github   ", style: "primary" },
-          { text: "https://github.com/lorem" },
-        ]);
-        break;
+        const maxLen = Math.max(
+          ...Object.keys(SOCIALS).map((social) => social.length),
+        );
 
+        Object.entries(SOCIALS).forEach(([social, { link }]) => {
+          addLine([
+            { text: social.padEnd(maxLen + 4), style: "primary" },
+            { text: link },
+          ]);
+        });
+
+        break;
       case "whoami":
         addLine([{ text: username }]);
-        break;
 
+        break;
       default:
         addLine([{ text: `command not found: ${command}` }]);
     }

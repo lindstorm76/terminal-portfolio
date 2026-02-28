@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 
-export type LineStyle = "primary" | "secondary" | "system" | "default";
+export type LineStyle = "primary" | "secondary" | "system" | "bold" | "default";
 
 export type LinePart = {
   text: string;

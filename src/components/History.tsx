@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { LINE_STYLE_MAP } from "../styles/lineStyles";
 import { useBootSequence } from "../hooks/useBootSequence";
 import { useHistory, type LinePart } from "../providers/HistoryContext";
@@ -13,8 +12,6 @@ const LinePart = ({ part }: { part: LinePart }) => {
     </Component>
   );
 };
-
-const LineWrapper = styled.div``;
 
 interface HistoryProps {
   onBootComplete?: () => void;
@@ -33,11 +30,11 @@ const History = ({ onBootComplete }: HistoryProps) => {
   });
 
   return lines.map((line) => (
-    <LineWrapper key={line.id}>
+    <div key={line.id}>
       {line.parts.map((part, i) => (
         <LinePart key={i} part={part} />
       ))}
-    </LineWrapper>
+    </div>
   ));
 };
 
