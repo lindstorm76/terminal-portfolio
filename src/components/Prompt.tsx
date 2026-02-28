@@ -451,6 +451,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     <InputWrapper>
       <HiddenInput
         ref={inputRef}
+        aria-label="terminal command input"
         value={value}
         onChange={(e) => {
           setValue(e.target.value);

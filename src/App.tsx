@@ -21,11 +21,11 @@ function App() {
   }, [lines, isBooting]);
 
   return (
-    <>
+    <main>
       <History key={bootKey} onBootComplete={() => setIsBooting(false)} />
       {!isBooting && <Prompt onReboot={handleReboot} />}
       <div ref={bottomRef} />
-    </>
+    </main>
   );
 }
 
