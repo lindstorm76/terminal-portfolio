@@ -42,6 +42,11 @@ const Caret = styled.span`
   animation: ${blink} 1s step-end infinite;
 `;
 
+const Selection = styled.span`
+  background-color: ${({ theme }) => theme.surface2};
+  color: ${({ theme }) => theme.text};
+`;
+
 const HiddenInput = styled.input`
   position: absolute;
   opacity: 0;
@@ -62,6 +67,7 @@ interface PromptInputProps {
 const PromptInput = ({ onReboot }: PromptInputProps) => {
   const [value, setValue] = useState("");
   const [cursorPos, setCursorPos] = useState(0);
+  const [selEnd, setSelEnd] = useState(0);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [draft, setDraft] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -79,12 +85,14 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   const syncCursor = () => {
     requestAnimationFrame(() => {
       setCursorPos(inputRef.current?.selectionStart ?? 0);
+      setSelEnd(inputRef.current?.selectionEnd ?? 0);
     });
   };
 
   const resetInput = () => {
     setValue("");
     setCursorPos(0);
+    setSelEnd(0);
     setHistoryIndex(-1);
     setDraft("");
     setSuggestions([]);
@@ -97,6 +105,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       if (inputRef.current) {
         inputRef.current.setSelectionRange(newValue.length, newValue.length);
         setCursorPos(newValue.length);
+        setSelEnd(newValue.length);
       }
     });
   };
@@ -294,9 +303,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
-  const beforeCursor = value.slice(0, cursorPos);
-  const atCursor = value[cursorPos] ?? "\u00A0";
-  const afterCursor = value.slice(cursorPos + 1);
+  const hasSelection = selEnd > cursorPos;
 
   return (
     <InputWrapper>
@@ -310,10 +317,21 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
           syncCursor();
         }}
         onKeyDown={handleKeyDown}
+        onSelect={syncCursor}
       />
-      <span>{beforeCursor}</span>
-      <Caret>{atCursor}</Caret>
-      <span>{afterCursor}</span>
+      {hasSelection ? (
+        <>
+          <span>{value.slice(0, cursorPos)}</span>
+          <Selection>{value.slice(cursorPos, selEnd)}</Selection>
+          <span>{value.slice(selEnd)}</span>
+        </>
+      ) : (
+        <>
+          <span>{value.slice(0, cursorPos)}</span>
+          <Caret>{value[cursorPos] ?? "\u00A0"}</Caret>
+          <span>{value.slice(cursorPos + 1)}</span>
+        </>
+      )}
       {suggestions.length > 0 && (
         <div>
           {suggestions.map((cmd, i) => (
