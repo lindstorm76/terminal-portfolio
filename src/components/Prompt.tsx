@@ -27,6 +27,12 @@ const PromptBody = () => {
   );
 };
 
+const SuggestedCommand = styled.span<{ selected: boolean }>`
+  background-color: ${({ selected, theme }) =>
+    selected ? `${theme.mauve}80` : "transparent"};
+  padding: 2px 4px;
+`;
+
 const blink = keyframes`
   0%, 100% { background-color: var(--caret-color); color: var(--caret-bg); }
   50% { background-color: transparent; color: var(--caret-color); }
@@ -334,8 +340,16 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       )}
       {suggestions.length > 0 && (
         <div>
-          {suggestions.map((cmd, i) => (
-            <span key={i}>{i < suggestions.length - 1 ? cmd + "  " : cmd}</span>
+          {suggestions.map((cmd, index) => (
+            <SuggestedCommand
+              style={{
+                marginRight: index < suggestions.length - 1 ? "12px" : "0px",
+              }}
+              key={index}
+              selected={suggestionIndex === index}
+            >
+              {cmd}
+            </SuggestedCommand>
           ))}
         </div>
       )}
