@@ -15,7 +15,9 @@ function App() {
   };
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!isBooting) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [lines, isBooting]);
 
   return (
