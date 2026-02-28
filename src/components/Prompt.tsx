@@ -70,18 +70,26 @@ const HiddenInput = styled.input`
 
 const PromptLine = styled.div`
   display: flex;
+  position: relative;
 `;
 
 const InputWrapper = styled.div`
   flex: 1;
   min-width: 0;
-  position: relative;
   cursor: text;
 `;
 
 const TextArea = styled.div`
   overflow: hidden;
   white-space: nowrap;
+  position: relative;
+`;
+
+const SuggestionsContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background-color: ${({ theme }) => theme.base};
 `;
 
 interface PromptInputProps {
@@ -153,9 +161,9 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     const lower = command.toLowerCase().trim();
 
     if (lower.startsWith("themes set ")) {
-      const name = lower.slice("themes set ".length).trim() as ThemeName;
+      const name = lower.slice("themes set ".length).trim();
       if (name in THEMES) {
-        setTheme(name);
+        setTheme(name as ThemeName);
         addLine([
           { text: "theme changed to " },
           { text: name, style: "primary" },
@@ -267,7 +275,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         onReboot();
 
         break;
-      case "socials":
+      case "socials": {
         const maxLen = Math.max(
           ...Object.keys(SOCIALS).map((social) => social.length),
         );
@@ -290,6 +298,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         addLine([{ text: "\u00A0" }]);
 
         break;
+      }
       case "themes":
         addLine([{ text: "\u00A0" }]);
         addLine([{ text: "🌻 latte" }]);
@@ -341,6 +350,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       resetInput();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      setSuggestions([]);
+      setSuggestionIndex(-1);
 
       if (commands.length === 0) return;
       if (historyIndex === -1) {
@@ -358,6 +369,8 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
       }
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
+      setSuggestions([]);
+      setSuggestionIndex(-1);
 
       if (historyIndex === -1) return;
       if (historyIndex < commands.length - 1) {
@@ -451,7 +464,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         )}
       </TextArea>
       {suggestions.length > 0 && (
-        <div>
+        <SuggestionsContainer>
           {suggestions.map((cmd, index) => (
             <SuggestedCommand
               style={{
@@ -463,7 +476,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
               {cmd}
             </SuggestedCommand>
           ))}
-        </div>
+        </SuggestionsContainer>
       )}
     </InputWrapper>
   );

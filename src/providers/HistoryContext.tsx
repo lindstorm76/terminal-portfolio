@@ -30,16 +30,9 @@ function useHistoryState(initialLines: Line[] = []) {
     setLines((prev) => [...prev, { id: createLineId(), parts }]);
   }, []);
 
-  const addText = useCallback((text: string, style?: LineStyle) => {
-    setLines((prev) => [
-      ...prev,
-      { id: createLineId(), parts: [{ text, style }] },
-    ]);
-  }, []);
-
   const clear = useCallback(() => setLines([]), []);
 
-  return { lines, setLines, addLine, addText, clear };
+  return { lines, setLines, addLine, clear };
 }
 
 export const HistoryProvider = ({
