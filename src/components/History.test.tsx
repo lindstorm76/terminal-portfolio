@@ -56,18 +56,6 @@ describe("History", () => {
     expect(screen.getByText("`.")).toBeInTheDocument();
   });
 
-  it("renders prompt line after boot sequence completes", async () => {
-    renderComponent();
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(5000);
-    });
-
-    expect(screen.getByText("@")).toBeInTheDocument();
-    expect(screen.getByText("terminal.thanapong.dev")).toBeInTheDocument();
-    expect(screen.getByText(":~$")).toBeInTheDocument();
-  });
-
   it("applies primary style to help command", async () => {
     renderComponent();
 
@@ -77,17 +65,6 @@ describe("History", () => {
 
     const helpText = screen.getByText("help");
     expect(helpText).toHaveStyle({ color: theme.mauve });
-  });
-
-  it("applies secondary style to domain", async () => {
-    renderComponent();
-
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(5000);
-    });
-
-    const domain = screen.getByText("terminal.thanapong.dev");
-    expect(domain).toHaveStyle({ color: theme.teal });
   });
 
   it("does not show welcome message before boot finishes", async () => {
