@@ -232,9 +232,9 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         ]);
         addLine([{ text: "\u00A0" }]);
         addLine([
-          { text: "type `" },
+          { text: "type " },
           { text: "email", style: "primary" },
-          { text: "` to reach me." },
+          { text: " to reach me" },
         ]);
         addLine([{ text: "\u00A0" }]);
 

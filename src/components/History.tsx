@@ -22,9 +22,8 @@ const History = ({ onBootComplete }: HistoryProps) => {
 
   useBootSequence(() => {
     addLine([
-      { text: "For a list of available commands, type `" },
+      { text: "For a list of available commands, type " },
       { text: "help", style: "primary" },
-      { text: "`." },
     ]);
     onBootComplete?.();
   });
