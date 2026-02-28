@@ -82,6 +82,15 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     });
   };
 
+  const resetInput = () => {
+    setValue("");
+    setCursorPos(0);
+    setHistoryIndex(-1);
+    setDraft("");
+    setSuggestions([]);
+    setSuggestionIndex(-1);
+  };
+
   const setValueAndMoveCursorToEnd = (newValue: string) => {
     setValue(newValue);
     requestAnimationFrame(() => {
@@ -199,7 +208,7 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.ctrlKey && e.key === "c") {
       addLine([
         { text: username, style: "secondary" },
         { text: "@" },
@@ -208,14 +217,19 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         { text: value },
       ]);
 
-      executeCommand(value);
+      resetInput();
+    } else if (e.key === "Enter") {
+      addLine([
+        { text: username, style: "secondary" },
+        { text: "@" },
+        { text: domain, style: "primary" },
+        { text: ":~$ " },
+        { text: value },
+      ]);
 
-      setValue("");
-      setCursorPos(0);
-      setHistoryIndex(-1);
-      setDraft("");
-      setSuggestions([]);
-      setSuggestionIndex(-1);
+      if (value.trim().length > 0) executeCommand(value);
+
+      resetInput();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
 
