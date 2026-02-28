@@ -30,7 +30,11 @@ const BOOT_SEQUENCE: BootLine[] = [
     text: "-----------------------------------------",
     timestamp: false,
   },
-  { time: 2.4, text: "      WELCOME TO FSOCIETY NODE", timestamp: false },
+  {
+    time: 2.4,
+    text: "        WELCOME TO FSOCIETY NODE",
+    timestamp: false,
+  },
   {
     time: 2.5,
     text: "-----------------------------------------",
@@ -39,7 +43,7 @@ const BOOT_SEQUENCE: BootLine[] = [
 ];
 
 function formatTimestamp(time: number): string {
-  return `[${time.toFixed(4).padStart(8, " ")}]`;
+  return `[${time.toFixed(4).padStart(7, " ")}]`;
 }
 
 export function useBootSequence(onComplete?: () => void) {

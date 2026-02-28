@@ -9,6 +9,10 @@ export const GlobalStyle = createGlobalStyle`
 
   #root {
     font-size: 14px;
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
   }
 
   body {
@@ -17,6 +21,13 @@ export const GlobalStyle = createGlobalStyle`
     font-family: "Martian Mono", system-ui, -apple-system, sans-serif;
     line-height: 1.6;
     padding: 16px;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    @media (max-width: 768px) {
+      padding: 8px;
+      line-height: 1.4;
+    }
   }
 
   a {

@@ -20,6 +20,12 @@ const PromptBodyWrapper = styled.span`
   flex-shrink: 0;
   white-space: nowrap;
   margin-right: 10px;
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
 `;
 
 const PromptBody = () => {
@@ -66,11 +72,19 @@ const HiddenInput = styled.input`
   width: 0;
   height: 0;
   font-size: 14px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const PromptLine = styled.div`
   display: flex;
   position: relative;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const InputWrapper = styled.div`
