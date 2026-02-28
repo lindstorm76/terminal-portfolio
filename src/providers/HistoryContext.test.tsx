@@ -34,22 +34,22 @@ describe("useHistory", () => {
     expect(result.current.lines[0].parts[0].text).toBe("hello");
   });
 
-  it("addText appends a simple text line", () => {
+  it("addLine with a single part appends a simple text line", () => {
     const { result } = renderHook(() => useHistory(), { wrapper });
 
     act(() => {
-      result.current.addText("hello world");
+      result.current.addLine([{ text: "hello world" }]);
     });
 
     expect(result.current.lines).toHaveLength(1);
     expect(result.current.lines[0].parts[0].text).toBe("hello world");
   });
 
-  it("addText applies style", () => {
+  it("addLine preserves the style on a part", () => {
     const { result } = renderHook(() => useHistory(), { wrapper });
 
     act(() => {
-      result.current.addText("error", "primary");
+      result.current.addLine([{ text: "error", style: "primary" }]);
     });
 
     expect(result.current.lines[0].parts[0]).toEqual({
@@ -62,8 +62,8 @@ describe("useHistory", () => {
     const { result } = renderHook(() => useHistory(), { wrapper });
 
     act(() => {
-      result.current.addText("line 1");
-      result.current.addText("line 2");
+      result.current.addLine([{ text: "line 1" }]);
+      result.current.addLine([{ text: "line 2" }]);
     });
 
     expect(result.current.lines).toHaveLength(2);
@@ -79,8 +79,8 @@ describe("useHistory", () => {
     const { result } = renderHook(() => useHistory(), { wrapper });
 
     act(() => {
-      result.current.addText("first");
-      result.current.addText("second");
+      result.current.addLine([{ text: "first" }]);
+      result.current.addLine([{ text: "second" }]);
     });
 
     expect(result.current.lines[0].id).not.toBe(result.current.lines[1].id);

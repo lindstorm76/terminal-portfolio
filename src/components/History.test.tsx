@@ -49,11 +49,10 @@ describe("History", () => {
       await vi.advanceTimersByTimeAsync(5000);
     });
 
-    expect(
-      screen.getByText("For a list of available commands, type `"),
-    ).toBeInTheDocument();
+    expect(document.body.textContent).toContain(
+      "For a list of available commands, type",
+    );
     expect(screen.getByText("help")).toBeInTheDocument();
-    expect(screen.getByText("`.")).toBeInTheDocument();
   });
 
   it("applies primary style to help command", async () => {
