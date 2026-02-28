@@ -122,7 +122,11 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
     switch (command.toLowerCase()) {
       case "about":
         addLine([{ text: "\u00A0" }]);
-        addLine([{ text: "Hello, friend." }]);
+        addLine([
+          { text: "Hello, " },
+          { text: "friend", style: "primary" },
+          { text: "." },
+        ]);
         addLine([{ text: "\u00A0" }]);
         addLine([
           {
@@ -143,9 +147,9 @@ const PromptInput = ({ onReboot }: PromptInputProps) => {
         ]);
         addLine([{ text: "\u00A0" }]);
         addLine([
-          { text: "type " },
+          { text: "type `" },
           { text: "email", style: "primary" },
-          { text: " to reach me." },
+          { text: "` to reach me." },
         ]);
         addLine([{ text: "\u00A0" }]);
 
